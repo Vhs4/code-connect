@@ -1,25 +1,22 @@
 import logger from '@/logger';
-import { API_URL } from '@/services/api'
 import { remark } from 'remark';
 import html from 'remark-html'
 import styles from './page.module.css';
 import CardPost from '@/components/CardPost';
+import db from '../../../../prisma/db';
+import { redirect } from 'next/navigation';
 
 async function getPostBySlug(slug) {
-    const url = `${API_URL}/posts?slug=${slug}`;
     try {
-        const response = await fetch(url);
-        if (!response.ok) {
-            logger.error(`Erro ao buscar post: ${response.statusText}`);
-            return {};
+        const post = await db.post.findFirst({
+            where: { slug: slug },
+            include: { author: true }
+        })
+
+        if (!post) {
+            logger.error(`Post com o slug ${slug} não foi encontrado.`);
+            throw new Error(`Post com o slug ${slug} não foi encontrado.`) 
         }
-        const data = await response.json();
-        if (data.length === 0) {
-            logger.warn(`Nenhum post encontrado para o slug: ${slug}`);
-            return {};
-        }
-        logger.info('Post obtido com sucesso');
-        const post =  data[0];
 
         const processedContent = await remark()
             .use(html)
@@ -31,8 +28,9 @@ async function getPostBySlug(slug) {
         return post;
     } catch (error) {
         logger.error(`Erro ao buscar post: ${error.message}`);
-        return {};
     }
+
+    redirect('/not-found')
 }
 
 
