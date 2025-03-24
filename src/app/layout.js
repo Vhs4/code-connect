@@ -1,19 +1,19 @@
-import Aside from '@/components/Aside';
-import './globals.css'
 import { Prompt } from 'next/font/google'
-import { SearchForm } from './components/SearchForm';
+
+import { Aside } from '@/components/Aside'
+import './globals.css'
+import { SearchForm } from '@/components/SearchForm'
+
+export const metadata = {
+  title: 'Code Connect',
+  description: 'Uma rede social para devs!',
+}
 
 const prompt = Prompt({
   weight: ['400', '500', '600'],
   subsets: ['latin'],
   display: 'swap',
 })
-
-
-export const metadata = {
-  title: "Code Connect",
-  description: "Uma rede social para devs!",
-};
 
 export default function RootLayout({ children }) {
   return (
@@ -30,5 +30,5 @@ export default function RootLayout({ children }) {
         </div>
       </body>
     </html>
-  );
+  )
 }
